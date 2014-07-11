@@ -1,10 +1,14 @@
 #include <node.h>
 #include <v8.h>
+#include <mecab.h>
 
 using namespace v8;
 
 Handle<Value> Method(const Arguments& args) {
   HandleScope scope;
+
+  MeCab::Tagger *tagger = MeCab::createTagger("");
+  
   return scope.Close(String::New("world"));
 }
 
