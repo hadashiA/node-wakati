@@ -4,13 +4,20 @@
 
 #include <iostream>
 
+// if (! eval) {
+//     const char *e = tagger ? tagger->what() : MeCab::getTaggerError();      
+//     std::cerr << "Exception:" << e << std::endl;
+//     delete tagger;
+//     return -1;
+// }
+
 using namespace std;
 using namespace v8;
 
 Handle<Value> Method(const Arguments& args) {
     HandleScope scope;
 
-    if (args.length() < 1) {
+    if (args.Length() < 1) {
         ThrowException(Exception::TypeError(String::New("Wrong number of arguments")));
         return scope.Close(Undefined());
     }
@@ -20,16 +27,21 @@ Handle<Value> Method(const Arguments& args) {
         return scope.Close(Undefined());
     }
 
-    String::Utf8Value utf8Text(args[0]);
-    cout << utf8Text << endl;
+    String::String::Utf8Value text_utf8(args[0]);
 
-    // MeCab::Tagger *tagger = MeCab::createTagger("");
-  
-    return scope.Close(String::New("world"));
+    Local<Array> result = Array::New();
+    MeCab::Tagger *tagger = MeCab::createTagger("");
+    const MeCab::Node *first = tagger->parseToNode(*text_utf8);
+    size_t i = 0;
+    for (const MeCab::Node *node = first->next; node->next; node = node->next) {
+        // strncpy(buf, node->surface, node->length);
+        result->Set(i++, String::New(node->surface, node->length));
+    }
+    return scope.Close(result);
 }
 
 void init(Handle<Object> exports) {
-    exports->Set(String::NewSymbol("wakati"),
+    exports->Set(String::NewSymbol("parse"),
                  FunctionTemplate::New(Method)->GetFunction());
 }
 
