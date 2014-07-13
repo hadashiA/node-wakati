@@ -1,9 +1,13 @@
 # node-wakati
 
-npm module for libmecab によるわかち書き
+libmecab によるわかち書き
 
 * dependencies
   * mecab
+
+## INSTALL  
+  
+npm publish not yet...
 
 ## USAGE
 
